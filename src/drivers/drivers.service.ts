@@ -16,7 +16,12 @@ export class DriversService {
   }
 
   getDrivers(page: number, size: number, starsWith: string) {
-    const drivers = this.database.getDrivers();
+    const allDrivers = this.database.getDrivers();
+    const drivers = starsWith
+      ? allDrivers.filter(({ name }) =>
+          name.trim().toLowerCase().startsWith(starsWith.trim().toLowerCase()),
+        )
+      : allDrivers;
 
     const startIndex = (Number(page) - 1) * Number(size);
     const endIndex = startIndex + Number(size);
