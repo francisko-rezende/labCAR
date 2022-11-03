@@ -19,7 +19,7 @@ export class Database {
 
   public saveDriver(driver: Driver) {
     const drivers = this.getDrivers();
-    const updatedBeers = [...drivers, driver];
-    this.saveDrivers(updatedBeers);
+    const updatedDrivers = [...drivers, driver];
+    this.saveDrivers(updatedDrivers);
   }
 }
