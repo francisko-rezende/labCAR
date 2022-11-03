@@ -1,4 +1,5 @@
-import { IsDate, IsNotEmpty, IsString } from 'class-validator';
+import { IsISO8601, IsNotEmpty, IsString } from 'class-validator';
+import { Is18YearsOld } from 'src/utils/is18YearsOld.validator';
 
 export class Driver {
   @IsNotEmpty()
@@ -6,8 +7,9 @@ export class Driver {
   name: string;
 
   @IsNotEmpty()
-  @IsDate()
-  birthDate: Date;
+  @IsISO8601()
+  @Is18YearsOld()
+  birthDate: string;
 
   @IsNotEmpty()
   @IsString()
