@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { Driver } from './driver.entity';
 import { DriversService } from './drivers.service';
 
@@ -19,5 +19,11 @@ export class DriversController {
   @Post()
   createDriver(@Body() driver: Driver) {
     this.service.saveDriver(driver);
+  }
+
+  @Get(':cpf')
+  getDriver(@Param('cpf') cpf: string) {
+    const driver = this.service.getDriver(cpf);
+    return driver;
   }
 }

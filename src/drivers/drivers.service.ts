@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Database } from 'src/database/database';
 import { GetDriversResult } from 'src/types/getDriversResult';
 import { Driver } from './driver.entity';
@@ -45,5 +45,19 @@ export class DriversService {
     }
 
     return result;
+  }
+
+  getDriver(cpf: string) {
+    const drivers = this.database.getDrivers();
+    const searchedDriver = drivers.find((driver) => driver.cpf === cpf);
+
+    if (!searchedDriver) {
+      throw new NotFoundException({
+        error: 404,
+        message: 'Driver not found',
+      });
+    }
+
+    return searchedDriver;
   }
 }
