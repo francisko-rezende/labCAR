@@ -1,18 +1,23 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
-import { Database } from 'src/database/database';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { Driver } from './driver.entity';
+import { DriversService } from './drivers.service';
 
 @Controller('drivers')
 export class DriversController {
-  constructor(private database: Database) {}
+  constructor(private service: DriversService) {}
 
   @Get()
-  findAll() {
-    console.log('All drivers');
+  getDrivers(
+    @Param('page') page = 1,
+    @Param('size') size = 10,
+    @Param('startsWith') startsWith: string,
+  ) {
+    const drivers = this.service.getDrivers();
+    return drivers;
   }
 
   @Post()
   createDriver(@Body() driver: Driver) {
-    this.database.saveDriver(driver);
+    this.service.saveDriver(driver);
   }
 }
