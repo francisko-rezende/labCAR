@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { Driver } from './driver.entity';
 import { DriversService } from './drivers.service';
 
@@ -8,11 +8,11 @@ export class DriversController {
 
   @Get()
   getDrivers(
-    @Param('page') page = 1,
-    @Param('size') size = 10,
-    @Param('startsWith') startsWith: string,
+    @Query('page') page = 1,
+    @Query('size') size = 10,
+    @Query('startsWith') startsWith: string,
   ) {
-    const drivers = this.service.getDrivers();
+    const drivers = this.service.getDrivers(page, size, startsWith);
     return drivers;
   }
 
