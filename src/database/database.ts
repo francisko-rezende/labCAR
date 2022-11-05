@@ -1,4 +1,4 @@
-import { Driver } from './../drivers/driver.entity';
+import { Driver } from 'src/drivers/driver.entity';
 import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 
@@ -6,7 +6,7 @@ import * as fs from 'fs';
 export class Database {
   private DRIVERS = 'drivers.json';
 
-  public getDrivers(): Driver[] {
+  public getDrivers() {
     const driversInFile = fs.readFileSync(this.DRIVERS).toString();
     const drivers = JSON.parse(driversInFile);
     return drivers;
