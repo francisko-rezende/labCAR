@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   ConflictException,
   Controller,
@@ -34,7 +35,7 @@ export class DriversController {
     const driver = this.service.getDriver(cpf);
     if (!driver) {
       throw new NotFoundException({
-        error: HttpStatus.NOT_FOUND,
+        statusCode: HttpStatus.NOT_FOUND,
         message: 'Driver not found',
       });
     }
@@ -46,7 +47,7 @@ export class DriversController {
 
     if (newDriver === 'conflict') {
       throw new ConflictException({
-        error: HttpStatus.CONFLICT,
+        statusCode: HttpStatus.CONFLICT,
         message: 'CPF must not have been used by other registered user.',
       });
     }
@@ -73,12 +74,22 @@ export class DriversController {
   }
 
   @Patch(':cpf/toggle-block')
-  public toggleBlock(@Param('cpf') cpf: string) {
-    const result = this.service.toggleBlock(cpf);
+  public toggleBlock(
+    @Param('cpf') cpf: string,
+    @Body() body: { blockStatus: boolean },
+  ) {
+    const result = this.service.toggleBlock(cpf, body);
+
+    if (result === 'not boolean') {
+      throw new BadRequestException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'blockStatus must be a boolean',
+      });
+    }
 
     if (result === 'not found') {
       throw new NotFoundException({
-        error: 404,
+        statusCode: HttpStatus.NOT_FOUND,
         message: 'Driver not found',
       });
     }

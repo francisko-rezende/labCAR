@@ -103,7 +103,9 @@ export class DriversService {
     this.database.saveDrivers(updatedDrivers);
   }
 
-  toggleBlock(cpf: string) {
+  toggleBlock(cpf: string, body: { blockStatus: boolean }) {
+    if (typeof body.blockStatus !== 'boolean') return 'not boolean';
+
     const drivers = this.database.getDrivers();
     const onlyDigitsCpf = this.stringUtils.removeNonNumericCharacters(cpf);
     const checkIfMatchingCpf = (driver) => driver.cpf === onlyDigitsCpf;
@@ -120,7 +122,7 @@ export class DriversService {
       return isDriverToUpdate
         ? {
             ...driver,
-            isBlocked: !driver.isBlocked,
+            isBlocked: body.blockStatus,
           }
         : driver;
     });
