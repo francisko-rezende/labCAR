@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
+import { NestResponseBuilder } from 'src/core/http/nestResponseBuilder';
 import { Driver } from './driver.entity';
 import { DriversService } from './drivers.service';
 
@@ -24,7 +33,14 @@ export class DriversController {
 
   @Post()
   createDriver(@Body() driver: Driver) {
-    this.service.saveDriver(driver);
-    // todo return custom response
+    const newDriver = this.service.saveDriver(driver);
+    return new NestResponseBuilder()
+      .withStatus(HttpStatus.CREATED)
+      .withHeaders({
+        Location: `/drivers/${newDriver.cpf}`,
+      })
+      .withBody(newDriver)
+      .build();
+    //todo add interceptor to include id
   }
 }
