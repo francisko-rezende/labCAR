@@ -1,5 +1,5 @@
 import { IsISO8601, IsNotEmpty, IsString } from 'class-validator';
-import { Is18YearsOld } from 'src/utils/is18YearsOld.validator';
+import { Is18YearsOld } from 'src/commons/decorators/is18YearsOld.validator';
 
 export class Driver {
   @IsNotEmpty()
