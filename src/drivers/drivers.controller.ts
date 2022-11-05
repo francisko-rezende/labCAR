@@ -16,15 +16,15 @@ export class DriversController {
     return drivers;
   }
 
-  @Post()
-  createDriver(@Body() driver: Driver) {
-    this.service.saveDriver(driver);
-    // todo return custom response
-  }
-
   @Get(':cpf')
   getDriver(@Param('cpf') cpf: string) {
     const driver = this.service.getDriver(cpf);
     return driver;
+  }
+
+  @Post()
+  createDriver(@Body() driver: Driver) {
+    this.service.saveDriver(driver);
+    // todo return custom response
   }
 }
