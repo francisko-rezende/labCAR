@@ -2,6 +2,7 @@ import { MESSAGES } from 'src/consts/messages';
 import { IsISO8601, IsNotEmpty, IsString, MaxLength } from 'class-validator';
 import { Is18YearsOld } from 'src/commons/decorators/is18YearsOld.validator';
 import { IsValidCpf } from 'src/commons/decorators/isValidCpf.validators';
+import { CpfHasntBeenUsed } from 'src/commons/decorators/hasCpfBeenUsedBefore.validator';
 
 export class Driver {
   @IsNotEmpty()
@@ -17,6 +18,7 @@ export class Driver {
   @IsNotEmpty()
   @IsString()
   @IsValidCpf({ message: MESSAGES.INVALID_CPF })
+  @CpfHasntBeenUsed()
   cpf: string;
 
   @IsNotEmpty()
