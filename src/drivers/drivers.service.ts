@@ -17,6 +17,16 @@ export class DriversService {
       ...driver,
       cpf: this.stringUtils.removeNonNumericCharacters(driver.cpf),
     };
+
+    const drivers = this.database.getDrivers();
+    const hasCpfBeenRegistered = drivers.some(
+      ({ cpf }) => cpf === newDriver.cpf,
+    );
+
+    if (hasCpfBeenRegistered) {
+      return 'conflict';
+    }
+
     this.database.saveDriver(newDriver);
     return newDriver;
   }
@@ -68,5 +78,33 @@ export class DriversService {
     }
 
     return searchedDriver;
+  }
+
+  updateDriver(driverInfo: Driver, cpf: string) {
+    const drivers = this.database.getDrivers();
+    const onlyDigitsCpf = this.stringUtils.removeNonNumericCharacters(cpf);
+    const checkIfMatchingCpf = (driver) => driver.cpf === onlyDigitsCpf;
+
+    const isDriverRegistered = drivers.some(checkIfMatchingCpf);
+
+    if (!isDriverRegistered) {
+      throw new NotFoundException({
+        error: 404,
+        message: 'Driver not found',
+      });
+    }
+
+    const updatedDrivers = drivers.map((driver) => {
+      const isDriverToUpdate = checkIfMatchingCpf(driver);
+
+      return isDriverToUpdate
+        ? {
+            ...driverInfo,
+            cpf: this.stringUtils.removeNonNumericCharacters(driverInfo.cpf),
+          }
+        : driver;
+    });
+
+    this.database.saveDrivers(updatedDrivers);
   }
 }
