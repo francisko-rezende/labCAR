@@ -18,6 +18,7 @@ export class DriversService {
       cpf: this.stringUtils.removeNonNumericCharacters(driver.cpf),
     };
     this.database.saveDriver(newDriver);
+    return newDriver;
   }
 
   getDrivers(page: number, size: number, startingCharacters: string) {
