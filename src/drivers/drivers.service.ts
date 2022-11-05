@@ -57,7 +57,8 @@ export class DriversService {
 
   getDriver(cpf: string) {
     const drivers = this.database.getDrivers();
-    const searchedDriver = drivers.find((driver) => driver.cpf === cpf);
+    const onlyDigitsCpf = this.stringUtils.removeNonNumericCharacters(cpf);
+    const searchedDriver = drivers.find(({ cpf }) => cpf === onlyDigitsCpf);
 
     if (!searchedDriver) {
       throw new NotFoundException({
