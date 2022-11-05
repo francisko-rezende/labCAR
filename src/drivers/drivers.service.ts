@@ -13,7 +13,11 @@ export class DriversService {
   }
 
   saveDriver(driver: Driver) {
-    this.database.saveDriver(driver);
+    const newDriver = {
+      ...driver,
+      cpf: this.stringUtils.removeNonNumericCharacters(driver.cpf),
+    };
+    this.database.saveDriver(newDriver);
   }
 
   getDrivers(page: number, size: number, startingCharacters: string) {
