@@ -1,11 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Database } from 'src/database/database';
 import { GetDriversResult } from 'src/types/getDriversResult';
+import { StringUtils } from 'src/utils/stringUtils';
 import { Driver } from './driver.entity';
 
 @Injectable()
 export class DriversService {
-  constructor(private database: Database) {}
+  constructor(private database: Database, private stringUtils: StringUtils) {}
 
   saveDrivers(drivers: Driver[]) {
     this.database.saveDrivers(drivers);
@@ -15,11 +16,13 @@ export class DriversService {
     this.database.saveDriver(driver);
   }
 
-  getDrivers(page: number, size: number, starsWith: string) {
+  getDrivers(page: number, size: number, startingCharacters: string) {
     const allDrivers = this.database.getDrivers();
-    const drivers = starsWith
+    const drivers = startingCharacters
       ? allDrivers.filter(({ name }) =>
-          name.trim().toLowerCase().startsWith(starsWith.trim().toLowerCase()),
+          this.stringUtils
+            .standardizeText(name)
+            .startsWith(this.stringUtils.standardizeText(startingCharacters)),
         )
       : allDrivers;
 
