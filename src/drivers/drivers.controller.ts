@@ -6,6 +6,7 @@ import {
   HttpStatus,
   NotFoundException,
   Param,
+  Patch,
   Post,
   Put,
   Query,
@@ -62,6 +63,25 @@ export class DriversController {
   @Put(':cpf')
   public updateDriver(@Param('cpf') cpf: string, @Body() driver: Driver) {
     this.service.updateDriver(driver, cpf);
+
+    return new NestResponseBuilder()
+      .withStatus(HttpStatus.NO_CONTENT)
+      .withHeaders({
+        Location: `/drivers/${cpf}`,
+      })
+      .build();
+  }
+
+  @Patch(':cpf/toggle-block')
+  public toggleBlock(@Param('cpf') cpf: string) {
+    const result = this.service.toggleBlock(cpf);
+
+    if (result === 'not found') {
+      throw new NotFoundException({
+        error: 404,
+        message: 'Driver not found',
+      });
+    }
 
     return new NestResponseBuilder()
       .withStatus(HttpStatus.NO_CONTENT)
