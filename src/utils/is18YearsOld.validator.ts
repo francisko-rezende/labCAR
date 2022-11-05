@@ -17,8 +17,8 @@ export class Is18YearsOldConstraint implements ValidatorConstraintInterface {
   ): boolean | Promise<boolean> {
     const birthDate = new Date(value);
     const today = new Date();
-    const minDate = subYears(today, 18);
-    const is18YearsOld = isBefore(birthDate, minDate);
+    const eighteenYearsAgo = subYears(today, 18);
+    const is18YearsOld = isBefore(birthDate, eighteenYearsAgo);
     return is18YearsOld;
   }
   defaultMessage?(validationArguments?: ValidationArguments): string {
