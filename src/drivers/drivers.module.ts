@@ -1,3 +1,4 @@
+import { StringUtils } from 'src/utils/stringUtils';
 import { Database } from 'src/database/database';
 import { Module } from '@nestjs/common';
 import { DriversController } from './drivers.controller';
@@ -6,6 +7,6 @@ import { Is18YearsOldConstraint } from 'src/commons/decorators/is18YearsOld.vali
 
 @Module({
   controllers: [DriversController],
-  providers: [DriversService, Database, Is18YearsOldConstraint],
+  providers: [DriversService, Database, Is18YearsOldConstraint, StringUtils],
 })
 export class DriversModule {}
