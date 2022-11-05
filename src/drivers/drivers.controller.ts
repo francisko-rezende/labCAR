@@ -1,10 +1,12 @@
 import {
   Body,
+  ConflictException,
   Controller,
   Get,
   HttpStatus,
   Param,
   Post,
+  Put,
   Query,
 } from '@nestjs/common';
 import { NestResponseBuilder } from 'src/core/http/nestResponseBuilder';
@@ -34,6 +36,14 @@ export class DriversController {
   @Post()
   createDriver(@Body() driver: Driver) {
     const newDriver = this.service.saveDriver(driver);
+
+    if (newDriver === 'conflict') {
+      throw new ConflictException({
+        statusCode: HttpStatus.CONFLICT,
+        message: 'CPF must not have been used by other registered user.',
+      });
+    }
+
     return new NestResponseBuilder()
       .withStatus(HttpStatus.CREATED)
       .withHeaders({
@@ -41,6 +51,17 @@ export class DriversController {
       })
       .withBody(newDriver)
       .build();
-    //todo add interceptor to include id
+  }
+
+  @Put(':cpf')
+  public updateDriver(@Param('cpf') cpf: string, @Body() driver: Driver) {
+    this.service.updateDriver(driver, cpf);
+
+    return new NestResponseBuilder()
+      .withStatus(HttpStatus.NO_CONTENT)
+      .withHeaders({
+        Location: `/drivers/${cpf}`,
+      })
+      .build();
   }
 }
