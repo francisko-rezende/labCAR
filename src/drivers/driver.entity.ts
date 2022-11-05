@@ -18,7 +18,6 @@ export class Driver {
   @IsNotEmpty()
   @IsString()
   @IsValidCpf({ message: MESSAGES.INVALID_CPF })
-  @CpfHasntBeenUsed()
   cpf: string;
 
   @IsNotEmpty()
