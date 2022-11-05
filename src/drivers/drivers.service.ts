@@ -70,13 +70,6 @@ export class DriversService {
     const onlyDigitsCpf = this.stringUtils.removeNonNumericCharacters(cpf);
     const searchedDriver = drivers.find(({ cpf }) => cpf === onlyDigitsCpf);
 
-    if (!searchedDriver) {
-      throw new NotFoundException({
-        error: 404,
-        message: 'Driver not found',
-      });
-    }
-
     return searchedDriver;
   }
 

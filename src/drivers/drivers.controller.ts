@@ -4,6 +4,7 @@ import {
   Controller,
   Get,
   HttpStatus,
+  NotFoundException,
   Param,
   Post,
   Put,
@@ -30,7 +31,12 @@ export class DriversController {
   @Get(':cpf')
   getDriver(@Param('cpf') cpf: string) {
     const driver = this.service.getDriver(cpf);
-    return driver;
+    if (!driver) {
+      throw new NotFoundException({
+        error: HttpStatus.NOT_FOUND,
+        message: 'Driver not found',
+      });
+    }
   }
 
   @Post()
@@ -39,7 +45,7 @@ export class DriversController {
 
     if (newDriver === 'conflict') {
       throw new ConflictException({
-        statusCode: HttpStatus.CONFLICT,
+        error: HttpStatus.CONFLICT,
         message: 'CPF must not have been used by other registered user.',
       });
     }
