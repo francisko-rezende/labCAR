@@ -16,6 +16,8 @@ export class DriversService {
     const newDriver = {
       ...driver,
       cpf: this.stringUtils.removeNonNumericCharacters(driver.cpf),
+      isBlocked: false,
+      isDeleted: false,
     };
 
     const drivers = this.database.getDrivers();
@@ -93,7 +95,32 @@ export class DriversService {
       return isDriverToUpdate
         ? {
             ...driverInfo,
-            cpf: this.stringUtils.removeNonNumericCharacters(driverInfo.cpf),
+            cpf: onlyDigitsCpf,
+          }
+        : driver;
+    });
+
+    this.database.saveDrivers(updatedDrivers);
+  }
+
+  toggleBlock(cpf: string) {
+    const drivers = this.database.getDrivers();
+    const onlyDigitsCpf = this.stringUtils.removeNonNumericCharacters(cpf);
+    const checkIfMatchingCpf = (driver) => driver.cpf === onlyDigitsCpf;
+
+    const isDriverRegistered = drivers.some(checkIfMatchingCpf);
+
+    if (!isDriverRegistered) {
+      return 'not found';
+    }
+
+    const updatedDrivers = drivers.map((driver) => {
+      const isDriverToUpdate = checkIfMatchingCpf(driver);
+
+      return isDriverToUpdate
+        ? {
+            ...driver,
+            isBlocked: !driver.isBlocked,
           }
         : driver;
     });
