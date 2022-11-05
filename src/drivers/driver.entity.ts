@@ -1,5 +1,6 @@
 import { IsISO8601, IsNotEmpty, IsString } from 'class-validator';
 import { Is18YearsOld } from 'src/commons/decorators/is18YearsOld.validator';
+import { IsValidCpf } from 'src/commons/decorators/isValidCpf.validators';
 
 export class Driver {
   @IsNotEmpty()
@@ -13,6 +14,7 @@ export class Driver {
 
   @IsNotEmpty()
   @IsString()
+  @IsValidCpf()
   cpf: string;
 
   @IsNotEmpty()
