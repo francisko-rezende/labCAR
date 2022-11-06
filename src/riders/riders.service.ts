@@ -93,7 +93,19 @@ export class RidersService {
     this.database.createRiders(updatedRiders);
   }
 
-  // remove(id: number) {
-  //   return `This action removes a #${id} rider`;
-  // }
+  removeRider(cpf: string) {
+    const riders = this.database.findAllRiders();
+    const onlyDigitsCpf = this.stringUtils.removeNonNumericCharacters(cpf);
+    const checkIfMatchingCpf = (rider) => rider.cpf === onlyDigitsCpf;
+
+    const isRiderRegistered = riders.some(checkIfMatchingCpf);
+
+    if (!isRiderRegistered) {
+      return 'not found';
+    }
+
+    const updatedRiders = riders.filter((rider) => !checkIfMatchingCpf(rider));
+
+    this.database.createRiders(updatedRiders);
+  }
 }
