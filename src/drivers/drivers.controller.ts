@@ -3,6 +3,7 @@ import {
   Body,
   ConflictException,
   Controller,
+  Delete,
   Get,
   HttpStatus,
   NotFoundException,
@@ -101,5 +102,18 @@ export class DriversController {
         Location: `/drivers/${cpf}`,
       })
       .build();
+  }
+  @Delete(':cpf')
+  removeRider(@Param('cpf') cpf: string) {
+    const result = this.service.removeDriver(cpf);
+
+    if (result === 'not found') {
+      throw new NotFoundException({
+        error: 404,
+        message: 'Driver not found',
+      });
+    }
+
+    return new NestResponseBuilder().withStatus(HttpStatus.NO_CONTENT).build();
   }
 }

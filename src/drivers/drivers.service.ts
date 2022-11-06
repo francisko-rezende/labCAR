@@ -126,4 +126,22 @@ export class DriversService {
 
     this.database.saveDrivers(updatedDrivers);
   }
+
+  removeDriver(cpf: string) {
+    const drivers = this.database.getDrivers();
+    const onlyDigitsCpf = this.stringUtils.removeNonNumericCharacters(cpf);
+    const checkIfMatchingCpf = (driver) => driver.cpf === onlyDigitsCpf;
+
+    const isDriverRegistered = drivers.some(checkIfMatchingCpf);
+
+    if (!isDriverRegistered) {
+      return 'not found';
+    }
+
+    const updatedDrivers = drivers.filter(
+      (driver) => !checkIfMatchingCpf(driver),
+    );
+
+    this.database.saveDrivers(updatedDrivers);
+  }
 }
