@@ -14,5 +14,5 @@ export class Trip {
 
   @IsNotEmpty()
   @IsString()
-  detination: string;
+  destination: string;
 }
