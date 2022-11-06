@@ -3,9 +3,10 @@ import { Module } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { DriversModule } from './drivers/drivers.module';
 import { RidersModule } from './riders/riders.module';
+import { TripsModule } from './trips/trips.module';
 
 @Module({
-  imports: [DriversModule, RidersModule],
+  imports: [DriversModule, RidersModule, TripsModule],
   controllers: [],
   providers: [
     {
