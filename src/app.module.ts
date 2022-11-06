@@ -2,9 +2,10 @@ import { TransformResponseInterceptor } from 'src/core/http/transformResponseInt
 import { Module } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { DriversModule } from './drivers/drivers.module';
+import { RidersModule } from './riders/riders.module';
 
 @Module({
-  imports: [DriversModule],
+  imports: [DriversModule, RidersModule],
   controllers: [],
   providers: [
     {

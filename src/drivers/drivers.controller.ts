@@ -3,6 +3,7 @@ import {
   Body,
   ConflictException,
   Controller,
+  Delete,
   Get,
   HttpStatus,
   NotFoundException,
@@ -39,6 +40,7 @@ export class DriversController {
         message: 'Driver not found',
       });
     }
+    return driver;
   }
 
   @Post()
@@ -48,7 +50,7 @@ export class DriversController {
     if (newDriver === 'conflict') {
       throw new ConflictException({
         statusCode: HttpStatus.CONFLICT,
-        message: 'CPF must not have been used by other registered user.',
+        message: 'CPF must not have been used by other registered driver.',
       });
     }
 
@@ -100,5 +102,18 @@ export class DriversController {
         Location: `/drivers/${cpf}`,
       })
       .build();
+  }
+  @Delete(':cpf')
+  removeRider(@Param('cpf') cpf: string) {
+    const result = this.service.removeDriver(cpf);
+
+    if (result === 'not found') {
+      throw new NotFoundException({
+        error: 404,
+        message: 'Driver not found',
+      });
+    }
+
+    return new NestResponseBuilder().withStatus(HttpStatus.NO_CONTENT).build();
   }
 }
