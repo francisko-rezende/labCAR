@@ -86,8 +86,17 @@ export class RidersController {
       .build();
   }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.ridersService.remove(+id);
-  // }
+  @Delete(':cpf')
+  removeRider(@Param('cpf') cpf: string) {
+    const result = this.ridersService.removeRider(cpf);
+
+    if (result === 'not found') {
+      throw new NotFoundException({
+        error: 404,
+        message: 'Rider not found',
+      });
+    }
+
+    return new NestResponseBuilder().withStatus(HttpStatus.NO_CONTENT).build();
+  }
 }
