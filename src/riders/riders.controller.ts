@@ -9,6 +9,7 @@ import {
   HttpStatus,
   ConflictException,
   NotFoundException,
+  Query,
 } from '@nestjs/common';
 import { RidersService } from './riders.service';
 import { NestResponseBuilder } from 'src/core/http/nestResponseBuilder';
@@ -39,8 +40,13 @@ export class RidersController {
   }
 
   @Get()
-  findAllRiders() {
-    return this.ridersService.findAllRiders();
+  findAllRiders(
+    @Query('page') page = 1,
+    @Query('size') size = 10,
+    @Query('startsWith') startsWith: string,
+  ) {
+    const riders = this.ridersService.findAllRiders(page, size, startsWith);
+    return riders;
   }
 
   @Get(':cpf')

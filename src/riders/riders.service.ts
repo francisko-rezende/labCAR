@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Database } from 'src/database/database';
+import { GetRidersReturn } from 'src/types/getRidersResult';
 import { StringUtils } from 'src/utils/stringUtils';
 import { Rider } from './riders.entity';
 
@@ -29,8 +30,38 @@ export class RidersService {
     return newRider;
   }
 
-  findAllRiders() {
-    return this.database.findAllRiders();
+  findAllRiders(page: number, size: number, startingCharacters: string) {
+    const allRiders = this.database.findAllRiders();
+    const riders = startingCharacters
+      ? allRiders.filter(({ name }) =>
+          this.stringUtils
+            .standardizeText(name)
+            .startsWith(this.stringUtils.standardizeText(startingCharacters)),
+        )
+      : allRiders;
+
+    const startIndex = (Number(page) - 1) * Number(size);
+    const endIndex = startIndex + Number(size);
+
+    const result: GetRidersReturn = {
+      data: riders.slice(startIndex, endIndex),
+    };
+
+    if (startIndex > 0) {
+      result.previous = {
+        page: Number(page) - 1,
+        size: size,
+      };
+    }
+
+    if (endIndex < riders.length) {
+      result.next = {
+        page: Number(page) + 1,
+        size: size,
+      };
+    }
+
+    return result;
   }
 
   findOneRider(cpf: string) {
