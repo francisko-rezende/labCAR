@@ -1,3 +1,4 @@
+import { StringUtils } from 'src/utils/stringUtils';
 import {
   Controller,
   Get,
@@ -10,6 +11,7 @@ import {
   ConflictException,
   NotFoundException,
   Query,
+  Put,
 } from '@nestjs/common';
 import { RidersService } from './riders.service';
 import { NestResponseBuilder } from 'src/core/http/nestResponseBuilder';
@@ -17,7 +19,10 @@ import { Rider } from './riders.entity';
 
 @Controller('riders')
 export class RidersController {
-  constructor(private readonly ridersService: RidersService) {}
+  constructor(
+    private ridersService: RidersService,
+    private stringUtils: StringUtils,
+  ) {}
 
   @Post()
   create(@Body() rider: Rider) {
@@ -61,10 +66,25 @@ export class RidersController {
     return rider;
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateRiderDto: UpdateRiderDto) {
-  //   return this.ridersService.update(+id, updateRiderDto);
-  // }
+  @Put(':cpf')
+  public updateRider(@Param('cpf') cpf: string, @Body() rider: Rider) {
+    const updatedRider = this.ridersService.updateRider(rider, cpf);
+    const onlyDigitsCpf = this.stringUtils.removeNonNumericCharacters(cpf);
+
+    if (updatedRider === 'not found') {
+      throw new NotFoundException({
+        error: 404,
+        message: 'Rider not found',
+      });
+    }
+
+    return new NestResponseBuilder()
+      .withStatus(HttpStatus.NO_CONTENT)
+      .withHeaders({
+        Location: `/riders/${onlyDigitsCpf}`,
+      })
+      .build();
+  }
 
   // @Delete(':id')
   // remove(@Param('id') id: string) {
