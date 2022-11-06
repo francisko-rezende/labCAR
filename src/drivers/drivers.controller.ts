@@ -39,6 +39,7 @@ export class DriversController {
         message: 'Driver not found',
       });
     }
+    return driver;
   }
 
   @Post()
@@ -48,7 +49,7 @@ export class DriversController {
     if (newDriver === 'conflict') {
       throw new ConflictException({
         statusCode: HttpStatus.CONFLICT,
-        message: 'CPF must not have been used by other registered user.',
+        message: 'CPF must not have been used by other registered driver.',
       });
     }
 
