@@ -93,10 +93,7 @@ export class DriversService {
       const isDriverToUpdate = checkIfMatchingCpf(driver);
 
       return isDriverToUpdate
-        ? {
-            ...driverInfo,
-            cpf: onlyDigitsCpf,
-          }
+        ? { ...driver, ...driverInfo, cpf: onlyDigitsCpf }
         : driver;
     });
 
