@@ -9,14 +9,13 @@ export class RidersService {
   constructor(private database: Database, private stringUtils: StringUtils) {}
 
   createRiders(riders: Rider[]) {
-    this.database.createRiders(riders);
+    this.database.saveRiders(riders);
   }
 
-  createRider(rider: Rider) {
-    const newRider = {
+  createRider(rider: Rider): Rider | 'conflict' {
+    const newRider: Rider = {
       ...rider,
       cpf: this.stringUtils.removeNonNumericCharacters(rider.cpf),
-      isDeleted: false,
     };
 
     const riders = this.database.findAllRiders();
@@ -26,7 +25,7 @@ export class RidersService {
       return 'conflict';
     }
 
-    this.database.createRider(newRider);
+    this.database.saveRider(newRider);
     return newRider;
   }
 
@@ -90,7 +89,7 @@ export class RidersService {
         : rider;
     });
 
-    this.database.createRiders(updatedRiders);
+    this.database.saveRiders(updatedRiders);
   }
 
   removeRider(cpf: string) {
@@ -106,6 +105,6 @@ export class RidersService {
 
     const updatedRiders = riders.filter((rider) => !checkIfMatchingCpf(rider));
 
-    this.database.createRiders(updatedRiders);
+    this.database.saveRiders(updatedRiders);
   }
 }
