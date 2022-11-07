@@ -16,19 +16,9 @@ export class TripsService {
     this.database.createTrip(newTrip);
     return newTrip;
   }
-  // create(createTripDto: CreateTripDto) {
-  //   return 'This action adds a new trip';
-  // }
-  // findAll() {
-  //   return `This action returns all trips`;
-  // }
-  // findOne(id: number) {
-  //   return `This action returns a #${id} trip`;
-  // }
-  // update(id: number, updateTripDto: UpdateTripDto) {
-  //   return `This action updates a #${id} trip`;
-  // }
-  // remove(id: number) {
-  //   return `This action removes a #${id} trip`;
-  // }
+
+  findTripsNearMe() {
+    const trips = this.database.findAllTrips();
+    return trips.slice(0, 2);
+  }
 }
