@@ -45,7 +45,7 @@ export class DriversController {
 
   @Post()
   createDriver(@Body() driver: Driver) {
-    const newDriver = this.service.saveDriver(driver);
+    const newDriver = this.service.createDriver(driver);
 
     if (newDriver === 'conflict') {
       throw new ConflictException({
