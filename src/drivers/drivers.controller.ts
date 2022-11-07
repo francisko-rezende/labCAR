@@ -1,3 +1,4 @@
+import { CreateDriverDto } from './dto/createDriver.dto';
 import {
   BadRequestException,
   Body,
@@ -14,7 +15,6 @@ import {
   Query,
 } from '@nestjs/common';
 import { NestResponseBuilder } from 'src/core/http/nestResponseBuilder';
-import { Driver } from './driver.entity';
 import { DriversService } from './drivers.service';
 
 @Controller('drivers')
@@ -22,7 +22,7 @@ export class DriversController {
   constructor(private service: DriversService) {}
 
   @Get()
-  getDrivers(
+  public findAllDrivers(
     @Query('page') page = 1,
     @Query('size') size = 10,
     @Query('startsWith') startsWith: string,
@@ -32,8 +32,8 @@ export class DriversController {
   }
 
   @Get(':cpf')
-  getDriver(@Param('cpf') cpf: string) {
-    const driver = this.service.getDriver(cpf);
+  public findOneDriver(@Param('cpf') cpf: string) {
+    const driver = this.service.findOneDriver(cpf);
     if (!driver) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
@@ -44,7 +44,7 @@ export class DriversController {
   }
 
   @Post()
-  createDriver(@Body() driver: Driver) {
+  public createDriver(@Body() driver: CreateDriverDto) {
     const newDriver = this.service.createDriver(driver);
 
     if (newDriver === 'conflict') {
@@ -64,7 +64,10 @@ export class DriversController {
   }
 
   @Put(':cpf')
-  public updateDriver(@Param('cpf') cpf: string, @Body() driver: Driver) {
+  public updateDriver(
+    @Param('cpf') cpf: string,
+    @Body() driver: CreateDriverDto,
+  ) {
     this.service.updateDriver(driver, cpf);
 
     return new NestResponseBuilder()
@@ -103,8 +106,9 @@ export class DriversController {
       })
       .build();
   }
+
   @Delete(':cpf')
-  removeRider(@Param('cpf') cpf: string) {
+  public removeDriver(@Param('cpf') cpf: string) {
     const result = this.service.removeDriver(cpf);
 
     if (result === 'not found') {
