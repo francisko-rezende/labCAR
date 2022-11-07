@@ -68,12 +68,21 @@ export class RidersController {
   @Put(':cpf')
   public updateRider(@Param('cpf') cpf: string, @Body() rider: Rider) {
     const updatedRider = this.ridersService.updateRider(rider, cpf);
-    const onlyDigitsCpf = this.stringUtils.removeNonNumericCharacters(cpf);
+    const onlyDigitsCpf = this.stringUtils.removeNonNumericCharacters(
+      rider.cpf,
+    );
 
     if (updatedRider === 'not found') {
       throw new NotFoundException({
         error: 404,
         message: 'Rider not found',
+      });
+    }
+
+    if (updatedRider === 'conflict') {
+      throw new ConflictException({
+        statusCode: HttpStatus.CONFLICT,
+        message: 'CPF must not have been used by other registered rider.',
       });
     }
 
