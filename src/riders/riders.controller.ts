@@ -54,7 +54,7 @@ export class RidersController {
   }
 
   @Get(':cpf')
-  findOne(@Param('cpf') cpf: string) {
+  findOneRider(@Param('cpf') cpf: string) {
     const rider = this.ridersService.findOneRider(cpf);
     if (!rider) {
       throw new NotFoundException({
