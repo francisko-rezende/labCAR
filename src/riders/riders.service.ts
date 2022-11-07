@@ -80,6 +80,18 @@ export class RidersService {
     const checkIfMatchingCpf = (rider) => rider.cpf === onlyDigitsCpf;
 
     const isRiderRegistered = riders.some(checkIfMatchingCpf);
+    const isCpfRegistered = riders.some(
+      (rider) =>
+        this.stringUtils.removeNonNumericCharacters(riderInfo.cpf) ===
+        rider.cpf,
+    );
+    const isOwnCpf =
+      onlyDigitsCpf ===
+      this.stringUtils.removeNonNumericCharacters(riderInfo.cpf);
+
+    if (isCpfRegistered && !isOwnCpf) {
+      return 'conflict';
+    }
 
     if (!isRiderRegistered) {
       return 'not found';
@@ -89,11 +101,19 @@ export class RidersService {
       const isRiderToUpdate = checkIfMatchingCpf(rider);
 
       return isRiderToUpdate
-        ? { ...rider, ...riderInfo, cpf: onlyDigitsCpf }
+        ? {
+            ...rider,
+            ...riderInfo,
+            cpf: this.stringUtils.removeNonNumericCharacters(riderInfo.cpf),
+          }
         : rider;
     });
 
     this.database.saveRiders(updatedRiders);
+    return updatedRiders.find(
+      ({ cpf }) =>
+        cpf === this.stringUtils.removeNonNumericCharacters(riderInfo.cpf),
+    );
   }
 
   removeRider(cpf: string) {
