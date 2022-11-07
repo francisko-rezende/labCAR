@@ -4,7 +4,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   HttpStatus,
@@ -25,7 +24,7 @@ export class RidersController {
   ) {}
 
   @Post()
-  create(@Body() rider: Rider) {
+  createRider(@Body() rider: Rider) {
     const newRider = this.ridersService.createRider(rider);
 
     if (newRider === 'conflict') {
