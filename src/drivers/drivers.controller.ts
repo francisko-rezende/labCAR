@@ -27,7 +27,7 @@ export class DriversController {
     @Query('size') size = 10,
     @Query('startsWith') startsWith: string,
   ) {
-    const drivers = this.service.getDrivers(page, size, startsWith);
+    const drivers = this.service.findAllDrivers(page, size, startsWith);
     return drivers;
   }
 
