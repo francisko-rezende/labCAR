@@ -10,7 +10,7 @@ export class Database {
   private RIDERS = 'riders.json';
   private TRIPS = 'trips.json';
 
-  public getDrivers(): Driver[] {
+  public findAllDrivers(): Driver[] {
     const driversInFile = fs.readFileSync(this.DRIVERS).toString();
     const drivers: Driver[] = JSON.parse(driversInFile);
     return drivers;
@@ -22,7 +22,7 @@ export class Database {
   }
 
   public saveDriver(driver: Driver) {
-    const drivers = this.getDrivers();
+    const drivers = this.findAllDrivers();
     const updatedDrivers = [...drivers, driver];
     this.saveDrivers(updatedDrivers);
   }
