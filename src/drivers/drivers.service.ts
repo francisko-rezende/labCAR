@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Database } from 'src/database/database';
-import { GetDriversResult } from 'src/types/getDriversResult';
+import { FindAllDriversResult } from 'src/types/findAllDriversResult';
 import { StringUtils } from 'src/utils/stringUtils';
 import { Driver } from './driver.entity';
 import { CreateDriverDto } from './dto/createDriver.dto';
@@ -20,7 +20,7 @@ export class DriversService {
       isBlocked: false,
     };
 
-    const drivers = this.database.getDrivers();
+    const drivers = this.database.findAllDrivers();
     const hasCpfBeenRegistered = drivers.some(
       ({ cpf }) => cpf === newDriver.cpf,
     );
@@ -33,8 +33,12 @@ export class DriversService {
     return newDriver;
   }
 
-  getDrivers(page: number, size: number, startingCharacters: string) {
-    const allDrivers = this.database.getDrivers();
+  findAllDrivers(
+    page: number,
+    size: number,
+    startingCharacters: string,
+  ): FindAllDriversResult {
+    const allDrivers = this.database.findAllDrivers();
     const drivers = startingCharacters
       ? allDrivers.filter(({ name }) =>
           this.stringUtils
@@ -46,7 +50,7 @@ export class DriversService {
     const startIndex = (Number(page) - 1) * Number(size);
     const endIndex = startIndex + Number(size);
 
-    const result: GetDriversResult = {
+    const result: FindAllDriversResult = {
       data: drivers.slice(startIndex, endIndex),
     };
 
@@ -68,7 +72,7 @@ export class DriversService {
   }
 
   getDriver(cpf: string) {
-    const drivers = this.database.getDrivers();
+    const drivers = this.database.findAllDrivers();
     const onlyDigitsCpf = this.stringUtils.removeNonNumericCharacters(cpf);
     const searchedDriver = drivers.find(({ cpf }) => cpf === onlyDigitsCpf);
 
@@ -76,7 +80,7 @@ export class DriversService {
   }
 
   updateDriver(driverInfo: Driver, cpf: string) {
-    const drivers = this.database.getDrivers();
+    const drivers = this.database.findAllDrivers();
     const onlyDigitsCpf = this.stringUtils.removeNonNumericCharacters(cpf);
     const checkIfMatchingCpf = (driver) => driver.cpf === onlyDigitsCpf;
 
@@ -103,7 +107,7 @@ export class DriversService {
   toggleBlock(cpf: string, body: { blockStatus: boolean }) {
     if (typeof body.blockStatus !== 'boolean') return 'not boolean';
 
-    const drivers = this.database.getDrivers();
+    const drivers = this.database.findAllDrivers();
     const onlyDigitsCpf = this.stringUtils.removeNonNumericCharacters(cpf);
     const checkIfMatchingCpf = (driver) => driver.cpf === onlyDigitsCpf;
 
@@ -128,7 +132,7 @@ export class DriversService {
   }
 
   removeDriver(cpf: string) {
-    const drivers = this.database.getDrivers();
+    const drivers = this.database.findAllDrivers();
     const onlyDigitsCpf = this.stringUtils.removeNonNumericCharacters(cpf);
     const checkIfMatchingCpf = (driver) => driver.cpf === onlyDigitsCpf;
 
