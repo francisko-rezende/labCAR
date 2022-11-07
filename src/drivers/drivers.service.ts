@@ -71,7 +71,7 @@ export class DriversService {
     return result;
   }
 
-  getDriver(cpf: string) {
+  findOneDriver(cpf: string): Driver {
     const drivers = this.database.findAllDrivers();
     const onlyDigitsCpf = this.stringUtils.removeNonNumericCharacters(cpf);
     const searchedDriver = drivers.find(({ cpf }) => cpf === onlyDigitsCpf);
@@ -79,7 +79,7 @@ export class DriversService {
     return searchedDriver;
   }
 
-  updateDriver(driverInfo: Driver, cpf: string) {
+  updateDriver(driverInfo: CreateDriverDto, cpf: string) {
     const drivers = this.database.findAllDrivers();
     const onlyDigitsCpf = this.stringUtils.removeNonNumericCharacters(cpf);
     const checkIfMatchingCpf = (driver) => driver.cpf === onlyDigitsCpf;
