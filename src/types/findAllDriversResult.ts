@@ -5,7 +5,7 @@ interface PaginationMeta {
   size: number;
 }
 
-export interface GetDriversResult {
+export interface FindAllDriversResult {
   data: Driver[];
   next?: PaginationMeta;
   previous?: PaginationMeta;
