@@ -3,6 +3,7 @@ import { Database } from 'src/database/database';
 import { GetDriversResult } from 'src/types/getDriversResult';
 import { StringUtils } from 'src/utils/stringUtils';
 import { Driver } from './driver.entity';
+import { CreateDriverDto } from './dto/createDriver.dto';
 
 @Injectable()
 export class DriversService {
@@ -12,12 +13,11 @@ export class DriversService {
     this.database.saveDrivers(drivers);
   }
 
-  saveDriver(driver: Driver) {
-    const newDriver = {
+  createDriver(driver: CreateDriverDto): 'conflict' | Driver {
+    const newDriver: Driver = {
       ...driver,
       cpf: this.stringUtils.removeNonNumericCharacters(driver.cpf),
       isBlocked: false,
-      isDeleted: false,
     };
 
     const drivers = this.database.getDrivers();
