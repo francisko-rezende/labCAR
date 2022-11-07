@@ -1,12 +1,5 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body } from '@nestjs/common';
+import { CurrentLocation } from './currentLocation.entity';
 import { Trip } from './trip.entity';
 import { TripsService } from './trips.service';
 
@@ -15,27 +8,12 @@ export class TripsController {
   constructor(private readonly tripsService: TripsService) {}
 
   @Post('request-trip')
-  create(@Body() tripInfo: Trip) {
+  createTripRequest(@Body() tripInfo: Trip) {
     return this.tripsService.createTripRequest(tripInfo);
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.tripsService.findAll();
-  // }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.tripsService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateTripDto: UpdateTripDto) {
-  //   return this.tripsService.update(+id, updateTripDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.tripsService.remove(+id);
-  // }
+  @Get('near-me')
+  findTripsNearMe(@Body() currentLocation: CurrentLocation) {
+    return this.tripsService.findTripsNearMe();
+  }
 }
