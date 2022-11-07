@@ -1,0 +1,20 @@
+[
+  {
+    "riderCpf": "33756922189",
+    "origin": "rua dos bobos, numero 0",
+    "destination": "Rua juiz de fora",
+    "status": "CREATED"
+  },
+  {
+    "riderCpf": "33756922189",
+    "origin": "rua dos bobos, numero 1",
+    "destination": "Rua belo horizonte",
+    "status": "CREATED"
+  },
+  {
+    "riderCpf": "33756922189",
+    "origin": "rua dos bobos, numero 2",
+    "destination": "Rua barbacena",
+    "status": "CREATED"
+  }
+]
