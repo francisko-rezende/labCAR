@@ -82,22 +82,37 @@ export class DriversService {
   updateDriver(driverInfo: CreateDriverDto, cpf: string) {
     const drivers = this.database.findAllDrivers();
     const onlyDigitsCpf = this.stringUtils.removeNonNumericCharacters(cpf);
-    const checkIfMatchingCpf = (driver) => driver.cpf === onlyDigitsCpf;
+    const checkIfMatchingCpf = (driver) =>
+      this.stringUtils.removeNonNumericCharacters(driver.cpf) === onlyDigitsCpf;
 
     const isDriverRegistered = drivers.some(checkIfMatchingCpf);
 
+    const isCpfRegistered = drivers.some(
+      (driver) =>
+        this.stringUtils.removeNonNumericCharacters(driverInfo.cpf) ===
+        driver.cpf,
+    );
+    const isOwnCpf =
+      onlyDigitsCpf ===
+      this.stringUtils.removeNonNumericCharacters(driverInfo.cpf);
+
     if (!isDriverRegistered) {
-      throw new NotFoundException({
-        error: 404,
-        message: 'Driver not found',
-      });
+      return 'not found';
+    }
+
+    if (isCpfRegistered && !isOwnCpf) {
+      return 'conflict';
     }
 
     const updatedDrivers = drivers.map((driver) => {
       const isDriverToUpdate = checkIfMatchingCpf(driver);
 
       return isDriverToUpdate
-        ? { ...driver, ...driverInfo, cpf: onlyDigitsCpf }
+        ? {
+            ...driver,
+            ...driverInfo,
+            cpf: this.stringUtils.removeNonNumericCharacters(driverInfo.cpf),
+          }
         : driver;
     });
 

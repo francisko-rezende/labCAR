@@ -16,10 +16,14 @@ import {
 } from '@nestjs/common';
 import { NestResponseBuilder } from 'src/core/http/nestResponseBuilder';
 import { DriversService } from './drivers.service';
+import { StringUtils } from 'src/utils/stringUtils';
 
 @Controller('drivers')
 export class DriversController {
-  constructor(private service: DriversService) {}
+  constructor(
+    private service: DriversService,
+    private stringUtils: StringUtils,
+  ) {}
 
   @Get()
   public findAllDrivers(
@@ -68,12 +72,29 @@ export class DriversController {
     @Param('cpf') cpf: string,
     @Body() driver: CreateDriverDto,
   ) {
-    this.service.updateDriver(driver, cpf);
+    const updatedDriver = this.service.updateDriver(driver, cpf);
+    const onlyDigitsCpf = this.stringUtils.removeNonNumericCharacters(
+      driver.cpf,
+    );
+
+    if (updatedDriver === 'not found') {
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Rider not found',
+      });
+    }
+
+    if (updatedDriver === 'conflict') {
+      throw new ConflictException({
+        statusCode: HttpStatus.CONFLICT,
+        message: 'CPF must not have been used by other registered driver.',
+      });
+    }
 
     return new NestResponseBuilder()
       .withStatus(HttpStatus.NO_CONTENT)
       .withHeaders({
-        Location: `/drivers/${cpf}`,
+        Location: `/drivers/${onlyDigitsCpf}`,
       })
       .build();
   }
