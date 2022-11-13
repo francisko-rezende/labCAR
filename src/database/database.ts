@@ -10,9 +10,9 @@ export class Database {
   private RIDERS = 'riders.json';
   private TRIPS = 'trips.json';
 
-  public getDrivers() {
+  public findAllDrivers(): Driver[] {
     const driversInFile = fs.readFileSync(this.DRIVERS).toString();
-    const drivers = JSON.parse(driversInFile);
+    const drivers: Driver[] = JSON.parse(driversInFile);
     return drivers;
   }
 
@@ -22,7 +22,7 @@ export class Database {
   }
 
   public saveDriver(driver: Driver) {
-    const drivers = this.getDrivers();
+    const drivers = this.findAllDrivers();
     const updatedDrivers = [...drivers, driver];
     this.saveDrivers(updatedDrivers);
   }
@@ -33,15 +33,15 @@ export class Database {
     return riders;
   }
 
-  public createRiders(riders: Rider[]) {
+  public saveRiders(riders: Rider[]) {
     const stringifiedRiders = JSON.stringify(riders);
     fs.writeFileSync(this.RIDERS, stringifiedRiders);
   }
 
-  public createRider(rider: Rider) {
+  public saveRider(rider: Rider) {
     const riders = this.findAllRiders();
     const updatedRiders = [...riders, rider];
-    this.createRiders(updatedRiders);
+    this.saveRiders(updatedRiders);
   }
 
   public findAllTrips() {
@@ -50,14 +50,14 @@ export class Database {
     return trips;
   }
 
-  public createTrips(trips: Trip[]) {
+  public saveTrips(trips: Trip[]) {
     const stringfiedTrips = JSON.stringify(trips);
     fs.writeFileSync(this.TRIPS, stringfiedTrips);
   }
 
-  public createTrip(trip: Trip) {
+  public saveTrip(trip: Trip) {
     const trips = this.findAllTrips();
     const updatedTrips = [...trips, trip];
-    this.createTrips(updatedTrips);
+    this.saveTrips(updatedTrips);
   }
 }

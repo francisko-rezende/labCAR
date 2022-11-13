@@ -4,7 +4,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   HttpStatus,
@@ -25,7 +24,7 @@ export class RidersController {
   ) {}
 
   @Post()
-  create(@Body() rider: Rider) {
+  createRider(@Body() rider: Rider) {
     const newRider = this.ridersService.createRider(rider);
 
     if (newRider === 'conflict') {
@@ -55,7 +54,7 @@ export class RidersController {
   }
 
   @Get(':cpf')
-  findOne(@Param('cpf') cpf: string) {
+  findOneRider(@Param('cpf') cpf: string) {
     const rider = this.ridersService.findOneRider(cpf);
     if (!rider) {
       throw new NotFoundException({
@@ -69,12 +68,21 @@ export class RidersController {
   @Put(':cpf')
   public updateRider(@Param('cpf') cpf: string, @Body() rider: Rider) {
     const updatedRider = this.ridersService.updateRider(rider, cpf);
-    const onlyDigitsCpf = this.stringUtils.removeNonNumericCharacters(cpf);
+    const onlyDigitsCpf = this.stringUtils.removeNonNumericCharacters(
+      rider.cpf,
+    );
 
     if (updatedRider === 'not found') {
       throw new NotFoundException({
         error: 404,
         message: 'Rider not found',
+      });
+    }
+
+    if (updatedRider === 'conflict') {
+      throw new ConflictException({
+        statusCode: HttpStatus.CONFLICT,
+        message: 'CPF must not have been used by other registered rider.',
       });
     }
 

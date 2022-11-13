@@ -1,15 +1,9 @@
 import { MESSAGES } from 'src/consts/messages';
-import {
-  IsBoolean,
-  IsISO8601,
-  IsNotEmpty,
-  IsString,
-  MaxLength,
-} from 'class-validator';
+import { IsISO8601, IsNotEmpty, IsString, MaxLength } from 'class-validator';
 import { Is18YearsOld } from 'src/commons/decorators/is18YearsOld.validator';
 import { IsValidCpf } from 'src/commons/decorators/isValidCpf.validators';
 
-export class Driver {
+export class CreateDriverDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(50)
@@ -32,8 +26,4 @@ export class Driver {
   @IsNotEmpty()
   @IsString()
   carModel: string;
-
-  @IsNotEmpty()
-  @IsBoolean()
-  isBlocked: boolean;
 }

@@ -13,7 +13,7 @@ export class TripsService {
       status: 'CREATED',
       riderCpf: this.stringUtils.removeNonNumericCharacters(tripInfo.riderCpf),
     };
-    this.database.createTrip(newTrip);
+    this.database.saveTrip(newTrip);
     return newTrip;
   }
 
