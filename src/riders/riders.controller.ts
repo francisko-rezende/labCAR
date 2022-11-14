@@ -15,7 +15,15 @@ import {
 import { RidersService } from './riders.service';
 import { NestResponseBuilder } from 'src/core/http/nestResponseBuilder';
 import { Rider } from './riders.entity';
+import {
+  ApiBody,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
+@ApiTags('Riders')
 @Controller('riders')
 export class RidersController {
   constructor(
@@ -24,6 +32,8 @@ export class RidersController {
   ) {}
 
   @Post()
+  @ApiCreatedResponse({ type: Rider })
+  @ApiBody({ type: Rider })
   createRider(@Body() rider: Rider) {
     const newRider = this.ridersService.createRider(rider);
 
@@ -44,6 +54,7 @@ export class RidersController {
   }
 
   @Get()
+  @ApiOkResponse({ type: Rider, isArray: true })
   findAllRiders(
     @Query('page') page = 1,
     @Query('size') size = 10,
@@ -54,6 +65,7 @@ export class RidersController {
   }
 
   @Get(':cpf')
+  @ApiOkResponse({ type: Rider })
   findOneRider(@Param('cpf') cpf: string) {
     const rider = this.ridersService.findOneRider(cpf);
     if (!rider) {
@@ -66,6 +78,8 @@ export class RidersController {
   }
 
   @Put(':cpf')
+  @ApiNoContentResponse()
+  @ApiBody({ type: Rider })
   public updateRider(@Param('cpf') cpf: string, @Body() rider: Rider) {
     const updatedRider = this.ridersService.updateRider(rider, cpf);
     const onlyDigitsCpf = this.stringUtils.removeNonNumericCharacters(
@@ -95,6 +109,7 @@ export class RidersController {
   }
 
   @Delete(':cpf')
+  @ApiNoContentResponse()
   removeRider(@Param('cpf') cpf: string) {
     const result = this.ridersService.removeRider(cpf);
 

@@ -25,6 +25,14 @@ $ yarn start:dev
 $ yarn start:prod
 ```
 
+## Using the Open API (Swagger)
+
+```bash
+$ yarn start
+```
+
+And then access `localhost:3000/api`
+
 ## Stay in touch
 
 - Author - Francisko de Moraes Rezende

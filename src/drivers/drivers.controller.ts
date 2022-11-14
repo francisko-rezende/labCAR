@@ -17,7 +17,16 @@ import {
 import { NestResponseBuilder } from 'src/core/http/nestResponseBuilder';
 import { DriversService } from './drivers.service';
 import { StringUtils } from 'src/utils/stringUtils';
+import {
+  ApiBody,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { Driver } from './driver.entity';
 
+@ApiTags('Drivers')
 @Controller('drivers')
 export class DriversController {
   constructor(
@@ -26,6 +35,7 @@ export class DriversController {
   ) {}
 
   @Get()
+  @ApiOkResponse({ type: [Driver] })
   public findAllDrivers(
     @Query('page') page = 1,
     @Query('size') size = 10,
@@ -36,6 +46,7 @@ export class DriversController {
   }
 
   @Get(':cpf')
+  @ApiOkResponse({ type: Driver })
   public findOneDriver(@Param('cpf') cpf: string) {
     const driver = this.service.findOneDriver(cpf);
     if (!driver) {
@@ -48,6 +59,8 @@ export class DriversController {
   }
 
   @Post()
+  @ApiBody({ type: CreateDriverDto })
+  @ApiCreatedResponse({ type: Driver })
   public createDriver(@Body() driver: CreateDriverDto) {
     const newDriver = this.service.createDriver(driver);
 
@@ -68,6 +81,8 @@ export class DriversController {
   }
 
   @Put(':cpf')
+  @ApiNoContentResponse()
+  @ApiBody({ type: CreateDriverDto })
   public updateDriver(
     @Param('cpf') cpf: string,
     @Body() driver: CreateDriverDto,
@@ -100,6 +115,7 @@ export class DriversController {
   }
 
   @Patch(':cpf/toggle-block')
+  @ApiNoContentResponse()
   public toggleBlock(
     @Param('cpf') cpf: string,
     @Body() body: { blockStatus: boolean },
@@ -129,6 +145,7 @@ export class DriversController {
   }
 
   @Delete(':cpf')
+  @ApiNoContentResponse()
   public removeDriver(@Param('cpf') cpf: string) {
     const result = this.service.removeDriver(cpf);
 
