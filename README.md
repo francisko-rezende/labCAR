@@ -1,5 +1,5 @@
 <p align="center">
-  <img src=""src/assets/labCard.svg" width="200" height="94.12" alt="Nest Logo" />
+  <img src="src/assets/labCard.svg" width="200"" height="94.12" alt="labCAR" />
 </p>
 
 ## Description
