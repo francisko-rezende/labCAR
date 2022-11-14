@@ -5,7 +5,7 @@ interface PaginationMeta {
   size: number;
 }
 
-export interface GetRidersReturn {
+export interface FindAllRidersResult {
   data: Rider[];
   next?: PaginationMeta;
   previous?: PaginationMeta;

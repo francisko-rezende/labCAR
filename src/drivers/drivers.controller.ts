@@ -1,3 +1,4 @@
+import { CreateDriverDto } from './dto/createDriver.dto';
 import {
   BadRequestException,
   Body,
@@ -14,26 +15,40 @@ import {
   Query,
 } from '@nestjs/common';
 import { NestResponseBuilder } from 'src/core/http/nestResponseBuilder';
-import { Driver } from './driver.entity';
 import { DriversService } from './drivers.service';
+import { StringUtils } from 'src/utils/stringUtils';
+import {
+  ApiBody,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { Driver } from './driver.entity';
 
+@ApiTags('Drivers')
 @Controller('drivers')
 export class DriversController {
-  constructor(private service: DriversService) {}
+  constructor(
+    private service: DriversService,
+    private stringUtils: StringUtils,
+  ) {}
 
   @Get()
-  getDrivers(
+  @ApiOkResponse({ type: [Driver] })
+  public findAllDrivers(
     @Query('page') page = 1,
     @Query('size') size = 10,
     @Query('startsWith') startsWith: string,
   ) {
-    const drivers = this.service.getDrivers(page, size, startsWith);
+    const drivers = this.service.findAllDrivers(page, size, startsWith);
     return drivers;
   }
 
   @Get(':cpf')
-  getDriver(@Param('cpf') cpf: string) {
-    const driver = this.service.getDriver(cpf);
+  @ApiOkResponse({ type: Driver })
+  public findOneDriver(@Param('cpf') cpf: string) {
+    const driver = this.service.findOneDriver(cpf);
     if (!driver) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
@@ -44,8 +59,10 @@ export class DriversController {
   }
 
   @Post()
-  createDriver(@Body() driver: Driver) {
-    const newDriver = this.service.saveDriver(driver);
+  @ApiBody({ type: CreateDriverDto })
+  @ApiCreatedResponse({ type: Driver })
+  public createDriver(@Body() driver: CreateDriverDto) {
+    const newDriver = this.service.createDriver(driver);
 
     if (newDriver === 'conflict') {
       throw new ConflictException({
@@ -64,18 +81,41 @@ export class DriversController {
   }
 
   @Put(':cpf')
-  public updateDriver(@Param('cpf') cpf: string, @Body() driver: Driver) {
-    this.service.updateDriver(driver, cpf);
+  @ApiNoContentResponse()
+  @ApiBody({ type: CreateDriverDto })
+  public updateDriver(
+    @Param('cpf') cpf: string,
+    @Body() driver: CreateDriverDto,
+  ) {
+    const updatedDriver = this.service.updateDriver(driver, cpf);
+    const onlyDigitsCpf = this.stringUtils.removeNonNumericCharacters(
+      driver.cpf,
+    );
+
+    if (updatedDriver === 'not found') {
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Driver not found.',
+      });
+    }
+
+    if (updatedDriver === 'conflict') {
+      throw new ConflictException({
+        statusCode: HttpStatus.CONFLICT,
+        message: 'CPF must not have been used by other registered driver.',
+      });
+    }
 
     return new NestResponseBuilder()
       .withStatus(HttpStatus.NO_CONTENT)
       .withHeaders({
-        Location: `/drivers/${cpf}`,
+        Location: `/drivers/${onlyDigitsCpf}`,
       })
       .build();
   }
 
   @Patch(':cpf/toggle-block')
+  @ApiNoContentResponse()
   public toggleBlock(
     @Param('cpf') cpf: string,
     @Body() body: { blockStatus: boolean },
@@ -103,8 +143,10 @@ export class DriversController {
       })
       .build();
   }
+
   @Delete(':cpf')
-  removeRider(@Param('cpf') cpf: string) {
+  @ApiNoContentResponse()
+  public removeDriver(@Param('cpf') cpf: string) {
     const result = this.service.removeDriver(cpf);
 
     if (result === 'not found') {

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Database } from 'src/database/database';
-import { GetRidersReturn } from 'src/types/getRidersResult';
+import { FindAllRidersResult } from 'src/types/findAllRidersResult';
 import { StringUtils } from 'src/utils/stringUtils';
 import { Rider } from './riders.entity';
 
@@ -9,14 +9,13 @@ export class RidersService {
   constructor(private database: Database, private stringUtils: StringUtils) {}
 
   createRiders(riders: Rider[]) {
-    this.database.createRiders(riders);
+    this.database.saveRiders(riders);
   }
 
-  createRider(rider: Rider) {
-    const newRider = {
+  createRider(rider: Rider): Rider | 'conflict' {
+    const newRider: Rider = {
       ...rider,
       cpf: this.stringUtils.removeNonNumericCharacters(rider.cpf),
-      isDeleted: false,
     };
 
     const riders = this.database.findAllRiders();
@@ -26,11 +25,15 @@ export class RidersService {
       return 'conflict';
     }
 
-    this.database.createRider(newRider);
+    this.database.saveRider(newRider);
     return newRider;
   }
 
-  findAllRiders(page: number, size: number, startingCharacters: string) {
+  findAllRiders(
+    page: number,
+    size: number,
+    startingCharacters: string,
+  ): FindAllRidersResult {
     const allRiders = this.database.findAllRiders();
     const riders = startingCharacters
       ? allRiders.filter(({ name }) =>
@@ -43,7 +46,7 @@ export class RidersService {
     const startIndex = (Number(page) - 1) * Number(size);
     const endIndex = startIndex + Number(size);
 
-    const result: GetRidersReturn = {
+    const result: FindAllRidersResult = {
       data: riders.slice(startIndex, endIndex),
     };
 
@@ -77,6 +80,18 @@ export class RidersService {
     const checkIfMatchingCpf = (rider) => rider.cpf === onlyDigitsCpf;
 
     const isRiderRegistered = riders.some(checkIfMatchingCpf);
+    const isCpfRegistered = riders.some(
+      (rider) =>
+        this.stringUtils.removeNonNumericCharacters(riderInfo.cpf) ===
+        rider.cpf,
+    );
+    const isOwnCpf =
+      onlyDigitsCpf ===
+      this.stringUtils.removeNonNumericCharacters(riderInfo.cpf);
+
+    if (isCpfRegistered && !isOwnCpf) {
+      return 'conflict';
+    }
 
     if (!isRiderRegistered) {
       return 'not found';
@@ -86,11 +101,19 @@ export class RidersService {
       const isRiderToUpdate = checkIfMatchingCpf(rider);
 
       return isRiderToUpdate
-        ? { ...rider, ...riderInfo, cpf: onlyDigitsCpf }
+        ? {
+            ...rider,
+            ...riderInfo,
+            cpf: this.stringUtils.removeNonNumericCharacters(riderInfo.cpf),
+          }
         : rider;
     });
 
-    this.database.createRiders(updatedRiders);
+    this.database.saveRiders(updatedRiders);
+    return updatedRiders.find(
+      ({ cpf }) =>
+        cpf === this.stringUtils.removeNonNumericCharacters(riderInfo.cpf),
+    );
   }
 
   removeRider(cpf: string) {
@@ -106,6 +129,6 @@ export class RidersService {
 
     const updatedRiders = riders.filter((rider) => !checkIfMatchingCpf(rider));
 
-    this.database.createRiders(updatedRiders);
+    this.database.saveRiders(updatedRiders);
   }
 }
