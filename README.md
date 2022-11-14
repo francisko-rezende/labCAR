@@ -33,6 +33,8 @@ $ yarn start
 
 And then access `localhost:3000/api`
 
+**Note**: The query params accepted by the different endpoints are not properly documented in the swagger!
+
 ## Stay in touch
 
 - Author - Francisko de Moraes Rezende
