@@ -80,7 +80,7 @@ export class DriversController {
     if (updatedDriver === 'not found') {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
-        message: 'Rider not found',
+        message: 'Driver not found.',
       });
     }
 
