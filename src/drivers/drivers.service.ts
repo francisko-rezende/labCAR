@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Database } from 'src/database/database';
 import { FindAllDriversResult } from 'src/types/findAllDriversResult';
 import { StringUtils } from 'src/utils/stringUtils';
